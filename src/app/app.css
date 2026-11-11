@@ -1,0 +1,3 @@
+:host { display: block; min-height: 100vh; }
+.page-shell { align-items: flex-start; background: #f3f6fb; box-sizing: border-box; display: flex; justify-content: center; min-height: 100vh; padding: clamp(20px, 6vw, 64px) 20px; }
+@media (max-width: 640px) { .page-shell { padding: 0; } }

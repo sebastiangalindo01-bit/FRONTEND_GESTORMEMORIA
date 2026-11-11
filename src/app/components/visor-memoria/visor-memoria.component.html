@@ -1,0 +1,27 @@
+<section class="memory-card" aria-labelledby="memory-title">
+  <header class="card-header"><div><p class="eyebrow">SIMULACIÓN · ESTADO FINAL</p><h1 id="memory-title">Distribución de memoria</h1><p class="subtitle">Vista de los bloques asignados y espacios disponibles.</p></div><div class="capacity-badge">{{ capacidadTotal }} <span>KB total</span></div></header>
+  @if (bloques.length > 0) {
+    <div class="summary" aria-label="Resumen de memoria">
+      <div class="summary-item"><span class="dot occupied-dot"></span><span>Ocupada</span><strong>{{ capacidadTotal - memoriaLibre }} KB</strong></div>
+      <div class="summary-item"><span class="dot free-dot"></span><span>Libre</span><strong>{{ memoriaLibre }} KB</strong></div>
+      <div class="summary-item"><span class="dot free-dot"></span><span>Espacios libres</span><strong>{{ bloquesLibres }}</strong></div>
+      <div class="usage"><div class="usage-label"><span>Uso de memoria</span><strong>{{ porcentajeOcupado | number: '1.0-1' }}%</strong></div><div class="usage-track"><span [style.width.%]="porcentajeOcupado"></span></div></div>
+    </div>
+    <div class="map-heading"><h2>Mapa de bloques</h2><span>Direcciones ascendentes</span></div>
+    <div class="memory-map" role="list" aria-label="Mapa proporcional de bloques de memoria">
+      @for (bloque of bloques; track $index) {
+        <div class="map-block" role="listitem" [class.free-block]="bloque.ocupante === -1" [class.occupied-block]="bloque.ocupante !== -1" [style.width]="anchoRelativo(bloque)" [attr.title]="(bloque.ocupante === -1 ? 'Libre' : 'Proceso ' + bloque.ocupante) + ' · ' + bloque.tamano + ' KB'">
+          @if (bloque.tamano / capacidadTotal > 0.12) { <span class="block-state">{{ bloque.ocupante === -1 ? 'LIBRE' : 'P' + bloque.ocupante }}</span><span class="block-size">{{ bloque.tamano }} KB</span> }
+          @else { <span class="sr-only">{{ bloque.ocupante === -1 ? 'Libre' : 'Proceso ' + bloque.ocupante }}: {{ bloque.tamano }} KB</span> }
+        </div>
+      }
+    </div>
+    <div class="address-axis"><span>{{ bloques[0].inicio }} KB</span><span>{{ bloques[bloques.length - 1].inicio + bloques[bloques.length - 1].tamano }} KB</span></div>
+    <div class="details-heading"><h2>Detalle de bloques</h2><span>{{ bloques.length }} bloques</span></div>
+    <div class="block-list">
+      @for (bloque of bloques; track $index) {
+        <article class="block-row" [class.row-free]="bloque.ocupante === -1" [class.row-occupied]="bloque.ocupante !== -1"><span class="status-icon" aria-hidden="true">{{ bloque.ocupante === -1 ? '○' : '●' }}</span><div class="block-description"><strong>{{ bloque.ocupante === -1 ? 'Espacio libre' : 'Proceso ' + bloque.ocupante }}</strong><span>Dirección inicial: {{ bloque.inicio }} KB</span></div><span class="block-chip">{{ bloque.tamano }} KB</span></article>
+      }
+    </div>
+  } @else { <div class="empty-state"><span class="empty-icon">▤</span><h2>Sin datos de memoria</h2><p>Ejecuta una simulación para visualizar la distribución de sus bloques.</p></div> }
+</section>
