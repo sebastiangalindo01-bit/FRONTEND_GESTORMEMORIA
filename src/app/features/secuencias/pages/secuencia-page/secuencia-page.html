@@ -1,74 +1,81 @@
-
 <main class="pagina-secuencias">
-
   <header class="encabezado">
-    <h1>Gestor de memoria</h1>
-    <p>Configuracion de la secuencia de solicitudes</p>
+    <div><p class="eyebrow">LABORATORIO DE SISTEMAS OPERATIVOS</p><h1>Gestor de memoria</h1><p>Construye una carga y compara cómo cada estrategia ocupa la memoria.</p></div>
+    <div class="usuario"><span>Estudiante</span><button class="button-quiet" (click)="salir()">Cerrar sesión</button></div>
   </header>
 
-  <section class="contenido">
+  @if (mensaje()) { <p class="mensaje" role="status">{{ mensaje() }}</p> }
 
-    <section class="consulta-secuencia">
-
-      <h2>Guardar secuencia</h2>
-
-      <label for="nombreSecuencia">Nombre de la secuencia:</label>
-
-      <input
-        id="nombreSecuencia"
-        type="text"
-        maxlength="100"
-        placeholder="Ej. Secuencia de prueba"
-        [value]="nombreSecuencia()"
-        (input)="nombreSecuencia.set($any($event.target).value)"
-      />
-
-      <button
-        type="button"
-        (click)="guardarSecuencia()"
-        [disabled]="guardando()"
-      >
-        {{ guardando() ? 'Guardando...' : 'Guardar secuencia' }}
-      </button>
-
-    </section>
-
-    <section class="consulta-secuencia">
-
-      <h2>Consultar secuencia guardada</h2>
-
-      <label for="idSecuencia">ID de la secuencia:</label>
-
-      <input
-        id="idSecuencia"
-        type="number"
-        min="1"
-        [value]="idSecuencia()"
-        (input)="idSecuencia.set(+$any($event.target).value)"
-      />
-
-      <button
-        type="button"
-        (click)="cargarSecuencia()"
-        [disabled]="cargando()"
-      >
-        {{ cargando() ? 'Consultando...' : 'Consultar secuencia' }}
-      </button>
-
-    </section>
-
-    @if (mensaje()) {
-      <p>{{ mensaje() }}</p>
-    }
-
-    <app-operacion-form
-      (operacionRegistrada)="agregarOperacion($event)">
-    </app-operacion-form>
-
-    <app-secuencia-list
-      [operaciones]="operaciones()">
-    </app-secuencia-list>
-
+  <section class="panel">
+      <div class="section-title"><div><p class="eyebrow">01 · ESCENARIO</p><h2>Mapa de memoria</h2></div><p>Los bloques deben formar un mapa contiguo.</p></div>
+      <div class="form-row"><label>Nombre del mapa<input type="text" maxlength="100" [value]="nombreMapa()" (input)="nombreMapa.set($any($event.target).value)" placeholder="Ej. Mapa de referencia"></label></div>
+      <div class="block-editor">
+        @for (bloque of bloques(); track $index; let i = $index) {
+          <div class="block-row"><span class="block-number">{{ i + 1 }}</span><label>Inicio<input type="number" min="0" [value]="bloque.inicio" (input)="actualizarBloque(i, 'inicio', +$any($event.target).value)"></label><label>Tamaño (KB)<input type="number" min="1" [value]="bloque.tamano" (input)="actualizarBloque(i, 'tamano', +$any($event.target).value)"></label><button class="icon-button" (click)="quitarBloque(i)" [disabled]="bloques().length < 2" aria-label="Quitar bloque">×</button></div>
+        }
+      </div>
+      <div class="actions"><button class="button-quiet" (click)="agregarBloque()">＋ Agregar bloque</button><button class="button-primary" (click)="guardarMapa()" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : 'Guardar mapa' }}</button></div>
   </section>
 
+  <section class="panel">
+    <div class="section-title"><div><p class="eyebrow">02 · CARGA</p><h2>Secuencia de solicitudes</h2></div><p>El orden de asignaciones y liberaciones cambia la fragmentación.</p></div>
+    <div class="form-row two-columns">
+      <label>Nombre de la secuencia<input type="text" maxlength="100" [value]="nombreSecuencia()" (input)="nombreSecuencia.set($any($event.target).value)" placeholder="Ej. Carga mixta"></label>
+      <label>ID de secuencia guardada<input type="number" min="1" [value]="idSecuencia() ?? ''" (input)="idSecuencia.set(+$any($event.target).value || null)"></label>
+    </div>
+    <app-operacion-form (operacionRegistrada)="agregarOperacion($event)"></app-operacion-form>
+    <app-secuencia-list [operaciones]="operaciones()"></app-secuencia-list>
+    <div class="actions"><button class="button-quiet" (click)="cargarSecuencia()" [disabled]="cargando()">{{ cargando() ? 'Cargando…' : 'Cargar secuencia' }}</button><button class="button-primary" (click)="guardarSecuencia()" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : 'Guardar secuencia' }}</button></div>
+  </section>
+
+  <section class="panel run-panel">
+      <div class="section-title"><div><p class="eyebrow">03 · COMPARACIÓN</p><h2>Comparar estrategias</h2></div><p>Cada resultado se guarda en tu historial.</p></div>
+    <div class="form-row two-columns">
+      <label>Mapa
+        <select [value]="mapaSeleccionado() ?? ''" (change)="mapaSeleccionado.set(+$any($event.target).value || null)">
+          <option value="">Selecciona un mapa</option>
+          @for (mapa of mapas(); track mapa.id) { <option [value]="mapa.id">{{ mapa.nombre }} · {{ mapa.bloques.length }} bloques</option> }
+        </select>
+      </label>
+      <label>Secuencia activa <span class="readonly-value">{{ idSecuencia() ? '#' + idSecuencia() + ' · ' + nombreSecuencia() : 'Guarda o carga una secuencia' }}</span></label>
+    </div>
+    <div class="actions"><button class="button-primary button-run" (click)="ejecutarComparacion()" [disabled]="ejecutando()">{{ ejecutando() ? 'Ejecutando…' : 'Comparar estrategias' }} <span>→</span></button></div>
+  </section>
+
+  @if (corridas().length) {
+    <section class="results-section">
+    <div class="section-title"><div><p class="eyebrow">RESULTADOS</p><h2>Una misma carga, distintas estrategias</h2></div><p>Menor fragmentación externa: <strong>{{ etiqueta(menorFragmentacion(corridas())) }}</strong></p></div>
+      <div class="results-grid">
+        @for (corrida of corridas(); track corrida.id) {
+          <article class="result-card" [class.best-result]="corrida.estrategia === menorFragmentacion(corridas())">
+            <div class="result-heading"><div><h3>{{ etiqueta(corrida.estrategia) }}</h3><small>Corrida #{{ corrida.id }}</small></div><span class="tag">{{ corrida.resultado.estado }}</span></div>
+            <div class="metrics">
+              <div><strong>{{ corrida.resultado.fragmentacionInterna }}</strong><span>KB internas</span></div>
+              <div><strong>{{ corrida.resultado.fragmentacionExterna }}</strong><span>KB externas</span></div>
+              <div><strong>{{ atendidas(corrida) }}</strong><span>atendidas</span></div>
+              <div><strong>{{ rechazadas(corrida).length }}</strong><span>rechazadas</span></div>
+            </div>
+            <h4>Mapa final <small>· {{ totalLibre(corrida) }} KB libres · hueco mayor {{ corrida.resultado.huecoMayor }} KB</small></h4>
+            <div class="memory-map" aria-label="Mapa final de memoria">
+              @for (bloque of corrida.resultado.mapaFinal; track $index) {
+                <div class="memory-block" [class.free]="bloque.libre || bloque.procesoId === -1" [style.flex-grow]="bloque.tamano" [title]="bloque.tamano + ' KB'">
+                  <strong>{{ bloque.libre || bloque.procesoId === -1 ? 'Libre' : 'P' + bloque.procesoId }}</strong><span>{{ bloque.tamano }} KB</span>
+                </div>
+              }
+            </div>
+            @if (rechazadas(corrida).length) {
+              <h4>Solicitudes rechazadas</h4>
+              <ul class="rejection-list">@for (decision of rechazadas(corrida); track decision.posicion) { <li><span>Paso {{ decision.posicion }}</span>{{ decision.mensaje }}</li> }</ul>
+            } @else { <p class="all-accepted">Todas las asignaciones fueron atendidas.</p> }
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  <section class="panel history-panel">
+    <div class="section-title"><div><p class="eyebrow">ARCHIVO PERSONAL</p><h2>Historial de corridas</h2></div><button class="button-quiet" (click)="cargarHistorial()">Actualizar</button></div>
+    @if (!historial().length) { <p class="empty-state">Todavía no hay corridas guardadas.</p> }
+    @else { <div class="history-list">@for (item of historial(); track item.id) { <button class="history-row" (click)="apiObtener(item.id)"><span class="history-id">#{{ item.id }}</span><span>{{ etiqueta(item.estrategia) }}</span><span>Mapa {{ item.mapaId }} · Secuencia {{ item.secuenciaId }}</span><time>{{ item.creadaEn | date:'short' }}</time></button> }</div> }
+  </section>
 </main>

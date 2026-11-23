@@ -22,7 +22,7 @@ import { routes } from './app.routes';
 // El interceptor agregará el token únicamente
 // a las peticiones dirigidas a memoria-service.
 const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-  urlPattern: /^http:\/\/localhost:8080\/.*/i,
+  urlPattern: /(^\/api\/.*|^https?:\/\/localhost:8081\/.*)/i,
   bearerPrefix: 'Bearer'
 });
 
@@ -34,7 +34,7 @@ export const appConfig: ApplicationConfig = {
 
     provideKeycloak({
       config: {
-        url: 'http://localhost:8081',
+        url: 'http://localhost:8180',
         realm: 'gestor-memoria',
         clientId: 'frontend-angular'
       },

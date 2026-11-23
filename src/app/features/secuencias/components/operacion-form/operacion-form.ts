@@ -12,7 +12,7 @@ import { Operacion } from '../../models/operacion.model';
 })
 export class OperacionForm {
 
-  tipoOperacion = signal<'ASIGNAR' | 'LIBERAR'>('LIBERAR');
+  tipoOperacion = signal<'ASIGNAR' | 'LIBERAR'>('ASIGNAR');
   procesoId = signal('');
   tamanoKb = signal<number | null>(null);
 
