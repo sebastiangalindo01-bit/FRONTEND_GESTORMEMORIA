@@ -1,0 +1,74 @@
+
+<main class="pagina-secuencias">
+
+  <header class="encabezado">
+    <h1>Gestor de memoria</h1>
+    <p>Configuracion de la secuencia de solicitudes</p>
+  </header>
+
+  <section class="contenido">
+
+    <section class="consulta-secuencia">
+
+      <h2>Guardar secuencia</h2>
+
+      <label for="nombreSecuencia">Nombre de la secuencia:</label>
+
+      <input
+        id="nombreSecuencia"
+        type="text"
+        maxlength="100"
+        placeholder="Ej. Secuencia de prueba"
+        [value]="nombreSecuencia()"
+        (input)="nombreSecuencia.set($any($event.target).value)"
+      />
+
+      <button
+        type="button"
+        (click)="guardarSecuencia()"
+        [disabled]="guardando()"
+      >
+        {{ guardando() ? 'Guardando...' : 'Guardar secuencia' }}
+      </button>
+
+    </section>
+
+    <section class="consulta-secuencia">
+
+      <h2>Consultar secuencia guardada</h2>
+
+      <label for="idSecuencia">ID de la secuencia:</label>
+
+      <input
+        id="idSecuencia"
+        type="number"
+        min="1"
+        [value]="idSecuencia()"
+        (input)="idSecuencia.set(+$any($event.target).value)"
+      />
+
+      <button
+        type="button"
+        (click)="cargarSecuencia()"
+        [disabled]="cargando()"
+      >
+        {{ cargando() ? 'Consultando...' : 'Consultar secuencia' }}
+      </button>
+
+    </section>
+
+    @if (mensaje()) {
+      <p>{{ mensaje() }}</p>
+    }
+
+    <app-operacion-form
+      (operacionRegistrada)="agregarOperacion($event)">
+    </app-operacion-form>
+
+    <app-secuencia-list
+      [operaciones]="operaciones()">
+    </app-secuencia-list>
+
+  </section>
+
+</main>

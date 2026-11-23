@@ -1,0 +1,37 @@
+<h2>Registrar operacion</h2>
+
+<label for="tipo">Tipo de operacion</label>
+
+<select
+  id="tipo"
+  [ngModel]="tipoOperacion()"
+  (ngModelChange)="tipoOperacion.set($event)">
+
+  <option value="ASIGNAR">Asignar memoria</option>
+  <option value="LIBERAR">Liberar memoria</option>
+</select>
+
+<label for="proceso">Identificador del proceso</label>
+
+<input
+  id="proceso"
+  type="text"
+  placeholder="Ejemplo: P1"
+  [ngModel]="procesoId()"
+  (ngModelChange)="procesoId.set($event)">
+
+@if (tipoOperacion() === 'ASIGNAR') {
+  <label for="tamano">Tamaño de memoria (KB)</label>
+
+  <input
+    id="tamano"
+    type="number"
+    min="1"
+    placeholder="Ejemplo: 100"
+    [ngModel]="tamanoKb()"
+    (ngModelChange)="tamanoKb.set($event === '' ? null : +$event)">
+}
+
+<button type="button" (click)="registrarOperacion()">
+  Registrar operacion
+</button>
