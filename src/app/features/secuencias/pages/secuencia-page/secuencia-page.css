@@ -1,0 +1,29 @@
+
+.pagina-secuencias {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.encabezado {
+  margin-bottom: 30px;
+}
+
+.encabezado h1 {
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+
+.encabezado p {
+  color: #6b7280;
+}
+
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding: 25px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}

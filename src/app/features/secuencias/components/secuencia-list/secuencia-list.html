@@ -1,0 +1,64 @@
+<section class="secuencia-container">
+
+  <h2>Secuencia de operaciones</h2>
+
+  @if (operaciones().length === 0) {
+
+    <p class="mensaje-vacio">
+      Todavia no hay operaciones registradas.
+    </p>
+
+  } @else {
+
+    <p class="contador">
+      Total de operaciones: {{ operaciones().length }}
+    </p>
+
+    <div class="lista-operaciones">
+
+      @for (operacion of operaciones(); track $index; let i = $index) {
+
+        <article class="operacion-item">
+
+          <span class="numero">
+            {{ i + 1 }}
+          </span>
+
+          <div class="informacion">
+
+            @if (operacion.tipo === 'ASIGNAR') {
+
+              <strong>Asignación de memoria</strong>
+
+              <p>Proceso: {{ operacion.procesoId }}</p>
+
+              <p>Tamaño: {{ operacion.tamanoKb }} KB</p>
+
+            } @else {
+
+              <strong>Liberación de memoria</strong>
+
+              <p>Proceso: {{ operacion.procesoId }}</p>
+
+            }
+
+          </div>
+
+          <span
+            class="tipo"
+            [class.asignacion]="operacion.tipo === 'ASIGNAR'"
+            [class.liberacion]="operacion.tipo === 'LIBERAR'">
+
+            {{ operacion.tipo }}
+
+          </span>
+
+        </article>
+
+      }
+
+    </div>
+
+  }
+
+</section>
